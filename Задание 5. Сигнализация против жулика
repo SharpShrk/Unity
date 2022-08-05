@@ -8,15 +8,18 @@ public class Alarm : MonoBehaviour
     [SerializeField] private AudioClip _alarmClip;
     private float _minVolume = 0.1f;
     private float _maxVolume = 1f;
-    private bool _isPlayingClip = false;
 
     private void OnTriggerEnter(Collider collision)
     {
         if (collision.TryGetComponent<Player>(out Player player))
         {
-            _audioSource.volume = _minVolume;
-            _isPlayingClip = true;
             _audioSource.Play();
+            _audioSource.volume = _minVolume;
+
+            for (float i = 0; i <= _maxVolume; i += 0.001f)
+            {
+                _audioSource.volume += i;
+            }
         }
     }
 
@@ -24,27 +27,12 @@ public class Alarm : MonoBehaviour
     {
         if (collision.TryGetComponent<Player>(out Player player))
         {
-            _audioSource.volume = _maxVolume;
-            _isPlayingClip = false;
-            _audioSource.Stop();  
-        }
-    }
-
-    private void Update()
-    {
-        if (_isPlayingClip)
-        {
-            for (float i = 0; i <= _maxVolume; i += 0.001f)
-            {
-                _audioSource.volume += i;
-            }
-        }
-        else
-        {
             for (float i = _maxVolume; i >= 0; i -= 0.001f)
             {
                 _audioSource.volume -= i;
             }
+
+            _audioSource.Stop();  
         }
     }
 }
